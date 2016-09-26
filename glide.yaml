@@ -1,0 +1,15 @@
+package: github.com/tixu/Auth
+import:
+- package: github.com/braintree/manners
+  subpackages:
+  - github.com\braintree\manners
+- package: github.com/dgrijalva/jwt-go
+  subpackages:
+  - github.com\dgrijalva\jwt-go
+- package: github.com/tixu/Auth
+  subpackages:
+  - github.com\tixu\Auth\handlers
+  - github.com\tixu\Auth\health
+- package: golang.org/x/crypto
+  subpackages:
+  - golang.org\x\crypto\bcrypt
