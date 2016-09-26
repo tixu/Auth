@@ -6,6 +6,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/tixu/Auth/users"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,8 +17,8 @@ type CustomClaim struct {
 }
 
 type loginHandler struct {
-	secret string
-	users  Users
+	secret      string
+	userservice users.UserService
 }
 
 type LoginResponse struct {
@@ -32,7 +33,7 @@ func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, ok := h.users[username]
+	user, ok := h.userservice.GetUser(username)
 	if !ok {
 		http.Error(w, "authorization failed", http.StatusUnauthorized)
 		return
@@ -51,7 +52,7 @@ func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Audience:  "tixu",
 		ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		IssuedAt:  time.Now().Unix(),
-		Subject:   user.Username,
+		Subject:   user.Name,
 	}
 
 	claims := CustomClaim{
@@ -74,28 +75,9 @@ func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func LoginHandler(secret string, users Users) http.Handler {
+func LoginHandler(secret string, userService users.UserService) http.Handler {
 	return &loginHandler{
-		secret: secret,
-		users:  users,
+		secret:      secret,
+		userservice: userService,
 	}
-}
-
-type User struct {
-	Username     string
-	PasswordHash string
-	Role         string
-	Email        string
-}
-
-type Users map[string]User
-
-var DB = Users{
-	"user": User{
-		Username: "user",
-		// bcrypt has for "password"
-		PasswordHash: "$2a$10$KgFhp4HAaBCRAYbFp5XYUOKrbO90yrpUQte4eyafk4Tu6mnZcNWiK",
-		Email:        "user@example.com",
-		Role:         "wtfd",
-	},
 }

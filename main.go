@@ -9,10 +9,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/braintree/manners"
 	"github.com/tixu/Auth/handlers"
 	"github.com/tixu/Auth/health"
-
-	"github.com/braintree/manners"
+	"github.com/tixu/Auth/mocks"
 )
 
 const version = "1.0.0"
@@ -30,7 +30,7 @@ func main() {
 	log.Printf("HTTP service listening on %s", *httpAddr)
 
 	errChan := make(chan error, 10)
-     // starting the companion server.
+	// starting the companion server.
 	hmux := http.NewServeMux()
 	hmux.HandleFunc("/healthz", health.HealthzHandler)
 	hmux.HandleFunc("/readiness", health.ReadinessHandler)
@@ -45,7 +45,7 @@ func main() {
 	}()
 
 	mux := http.NewServeMux()
-	mux.Handle("/login", handlers.LoginHandler(*secret, handlers.DB))
+	mux.Handle("/login", handlers.LoginHandler(*secret, mocks.GetUserMockService()))
 	mux.Handle("/version", handlers.VersionHandler(version))
 
 	httpServer := manners.NewServer()

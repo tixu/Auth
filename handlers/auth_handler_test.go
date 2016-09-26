@@ -7,21 +7,8 @@ import (
 	"testing"
 
 	"github.com/tixu/Auth/handlers"
+	"github.com/tixu/Auth/mocks"
 )
-
-var users handlers.Users
-
-func init() {
-	users = handlers.Users{
-		"user": handlers.User{
-			Username: "user",
-			// bcrypt has for "password"
-			PasswordHash: "$2a$10$KgFhp4HAaBCRAYbFp5XYUOKrbO90yrpUQte4eyafk4Tu6mnZcNWiK",
-			Email:        "user@example.com",
-			Role:         "wtfd",
-		},
-	}
-}
 
 func TestUnAuhthHandler(t *testing.T) {
 
@@ -33,7 +20,7 @@ func TestUnAuhthHandler(t *testing.T) {
 	}
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := handlers.LoginHandler("secret", users)
+	handler := handlers.LoginHandler("secret", mocks.GetUserMockService())
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -56,7 +43,7 @@ func TestUnUserHandler(t *testing.T) {
 	}
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := handlers.LoginHandler("secret", users)
+	handler := handlers.LoginHandler("secret", mocks.GetUserMockService())
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -80,7 +67,7 @@ func TestOkHandler(t *testing.T) {
 	}
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := handlers.LoginHandler("secret", users)
+	handler := handlers.LoginHandler("secret", mocks.GetUserMockService())
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
