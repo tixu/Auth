@@ -14,35 +14,14 @@ type CustomClaim struct {
 	Roles string `json:Roles`
 	jwt.StandardClaims
 }
-type VersionResponse struct {
-	Version string `json:"version"`
-}
-
-type versionHandler struct {
-	version string
-}
-
-func (h *versionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	response := VersionResponse{
-		Version: h.version,
-	}
-	json.NewEncoder(w).Encode(response)
-	return
-}
-
-func VersionHandler(version string) http.Handler {
-	return &versionHandler{
-		version: version,
-	}
-}
-
-type LoginResponse struct {
-	Token string `json:"token"`
-}
 
 type loginHandler struct {
 	secret string
 	users  Users
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
 }
 
 func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
