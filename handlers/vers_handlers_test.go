@@ -1,7 +1,6 @@
 package handlers_test
 
 import (
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,7 +12,7 @@ import (
 func TestVersionCheckHandler(t *testing.T) {
 	version := "1.0.0"
 	responseexpected := `{"version":"1.0.0"}`
-	log.Printf("hello")
+
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
 	req, err := http.NewRequest("GET", "/version", nil)
