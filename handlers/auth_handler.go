@@ -25,6 +25,16 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
+// Client creates a connection to the services.
+type Client interface {
+	Connect() Session
+}
+
+// Session represents authenticable connection to the services.
+type Session interface {
+	UserService() users.User
+}
+
 func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	username, password, ok := r.BasicAuth()
@@ -33,13 +43,13 @@ func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, ok := h.userservice.GetUser(username)
-	if !ok {
+	user, err := h.userservice.GetUser(username)
+	if err != nil {
 		http.Error(w, "authorization failed", http.StatusUnauthorized)
 		return
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
 		http.Error(w, "authorization failed", http.StatusUnauthorized)
 		return
