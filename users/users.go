@@ -1,7 +1,5 @@
 package users
 
-import "github.com/tixu/Auth/users"
-
 // User is the information about the user
 type User struct {
 	ID           uint64 `json:"id"`
@@ -16,11 +14,11 @@ type Users map[string]User
 
 // UserService is the operations that will be used to respond to the client.
 type UserService interface {
-	GetUser(name string) (User, error)
+	GetUser(name string) (*User, error)
 }
 
 // UserAdmin contains all the operations neeeded to manage the users.
 type UserAdmin interface {
-	AddUser(user *users.User) error
+	AddUser(user *User) error
 	DeleteUser(name string) error
 }

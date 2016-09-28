@@ -10,9 +10,9 @@ import (
 	"syscall"
 
 	"github.com/braintree/manners"
+	"github.com/tixu/Auth/bolt"
 	"github.com/tixu/Auth/handlers"
 	"github.com/tixu/Auth/health"
-	"github.com/tixu/Auth/mocks"
 )
 
 const version = "1.0.0"
@@ -45,7 +45,15 @@ func main() {
 	}()
 
 	mux := http.NewServeMux()
-	mux.Handle("/login", handlers.LoginHandler(*secret, mocks.GetUserMockService()))
+	client := bolt.NewClient()
+	client.Path = "db.bolt"
+	err := client.Open()
+	if err != nil {
+		panic(err)
+	}
+
+	userService := client.Connect().GetUserService()
+	mux.Handle("/login", handlers.LoginHandler(*secret, &userService))
 	mux.Handle("/version", handlers.VersionHandler(version))
 
 	httpServer := manners.NewServer()
