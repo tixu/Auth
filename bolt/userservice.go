@@ -12,6 +12,15 @@ type UserService struct {
 	session *Session
 }
 
+func (s *UserService) Ping() error {
+	tx, err := s.session.db.Begin(false)
+	if err != nil {
+		return errors.Wrap(err, "unable to get a session while ping the database")
+	}
+	defer s.session.db.Close()
+
+}
+
 func (s *UserService) DeleteUser(name string) error {
 	// Start writable transaction.
 	tx, err := s.session.db.Begin(true)
@@ -51,8 +60,19 @@ func (s *UserService) GetUser(name string) (users.User, error) {
 	}
 	return u, nil
 }
+
+/*ListUsers list all the users store in the bolt store
+//func (s *UserService) ListUsers() user.Users {
+	tx, err := s.session.db.Begin(false)
+	if err != nil {
+		return errors.Wrap(err, "unable to get a session while listing all the users")
+	}
+
+}*/
+
+//AddUser adds an user to bolt store
 func (s *UserService) AddUser(user *users.User) error {
-	// Start read-only transaction.
+	// Start writable transaction.
 	tx, err := s.session.db.Begin(true)
 	if err != nil {
 		return errors.Wrap(err, "unable to get a session while creating a user")
