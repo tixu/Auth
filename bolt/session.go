@@ -25,6 +25,9 @@ func newSession(db *bolt.DB) *Session {
 // UserService returns a user service associated with this session.
 func (s *Session) GetUserService() UserService { return s.userService }
 
+// AdminService returns a admin service associated with this session
+func (s *Session) GetAdminService() UserService { return s.userService }
+
 // itob returns an 8-byte big-endian encoded byte slice of v.
 //
 // This function is typically used for encoding integer IDs to byte slices

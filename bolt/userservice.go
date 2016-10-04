@@ -8,7 +8,7 @@ import (
 	"github.com/tixu/Auth/users"
 )
 
-// DialService represents a service for managing dials.
+// UserService represents a service for managing dials.
 
 type UserService struct {
 	session *Session
@@ -64,14 +64,15 @@ func (s *UserService) GetUser(name string) (*users.User, error) {
 	return &u, nil
 }
 
-/*ListUsers list all the users store in the bolt store
-//func (s *UserService) ListUsers() user.Users {
-	tx, err := s.session.db.Begin(false)
+//ListAll list all the users store in the bolt store
+func (s *UserService) ListAll() (users.Users, error) {
+	/**tx, err := s.session.db.Begin(false)
+	tx.
 	if err != nil {
-		return errors.Wrap(err, "unable to get a session while listing all the users")
-	}
-
-}*/
+		return nil, errors.Wrap(err, "unable to get a session while listing all the users")
+	}*/
+	return nil, errors.New("unimplemented")
+}
 
 //AddUser adds an user to bolt store
 func (s *UserService) AddUser(user *users.User) error {

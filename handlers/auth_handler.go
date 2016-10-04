@@ -39,19 +39,19 @@ func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	username, password, ok := r.BasicAuth()
 	if !ok {
-		http.Error(w, "authorization failed", http.StatusUnauthorized)
+		http.Error(w, "authorization failed basic authentication", http.StatusUnauthorized)
 		return
 	}
 
 	user, err := h.userservice.GetUser(username)
 	if err != nil {
-		http.Error(w, "authorization failed", http.StatusUnauthorized)
+		http.Error(w, "authorization failed user not found", http.StatusUnauthorized)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
-		http.Error(w, "authorization failed", http.StatusUnauthorized)
+		http.Error(w, "authorization failed bad password", http.StatusUnauthorized)
 		return
 	}
 

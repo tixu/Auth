@@ -10,9 +10,11 @@ import (
 	"syscall"
 
 	"github.com/braintree/manners"
+	"github.com/gorilla/mux"
 	"github.com/tixu/Auth/bolt"
 	"github.com/tixu/Auth/handlers"
 	"github.com/tixu/Auth/health"
+	"github.com/tixu/Auth/users"
 )
 
 const version = "1.0.0"
@@ -44,7 +46,7 @@ func main() {
 		errChan <- healthServer.ListenAndServe()
 	}()
 
-	mux := http.NewServeMux()
+	mux := mux.NewRouter()
 	client := bolt.NewClient()
 	client.Path = "db.bolt"
 	err := client.Open()
@@ -53,8 +55,32 @@ func main() {
 	}
 
 	userService := client.Connect().GetUserService()
+	user := users.User{
+		Name: "user",
+		// bcrypt has for "password"
+		PasswordHash: "$2a$10$KgFhp4HAaBCRAYbFp5XYUOKrbO90yrpUQte4eyafk4Tu6mnZcNWiK",
+		Email:        "user@example.com",
+		Role:         "wtfd",
+	}
+	userService.AddUser(&user)
+	user = users.User{
+		Name: "admin",
+		// bcrypt has for "password"
+
+		PasswordHash: "$2a$08$YFB7wzCrACOcg9IIQyhqCOyJOLNvta.IyqYqVy0i556GFhj2M2YNm",
+		Email:        "user@example.com",
+		Role:         "wtfd",
+	}
+	userService.AddUser(&user)
+
 	mux.Handle("/login", handlers.LoginHandler(*secret, &userService))
 	mux.Handle("/version", handlers.VersionHandler(version))
+	adminService := client.Connect().GetAdminService()
+	admin := handlers.GetAdmin(*secret, &adminService)
+
+	mux.Handle("/admin/user", admin.Add()).Methods(http.MethodPost)
+	mux.Handle("/admin/user/{:id}", admin.Del()).Methods(http.MethodDelete)
+	mux.Handle("/admin/user", admin.ListAll()).Methods(http.MethodGet)
 
 	httpServer := manners.NewServer()
 	httpServer.Addr = *httpAddr

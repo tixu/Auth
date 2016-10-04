@@ -13,6 +13,8 @@ var (
 
 func HealthzStatus() int {
 	mu.RLock()
+	
+	
 	defer mu.RUnlock()
 	return healthzStatus
 }

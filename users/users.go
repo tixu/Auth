@@ -21,4 +21,5 @@ type UserService interface {
 type UserAdmin interface {
 	AddUser(user *User) error
 	DeleteUser(name string) error
+	ListAll() (Users, error)
 }
