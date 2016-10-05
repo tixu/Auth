@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -33,10 +34,20 @@ func (h *AdminHandler) Add() http.HandlerFunc {
 // ListAll the users registered
 func (h *AdminHandler) listAll(w http.ResponseWriter, r *http.Request) {
 
-	users, _ := h.userAdmin.ListAll()
-	fmt.Printf("users: %+v", users)
+	users, err := h.userAdmin.ListAll()
 
-	http.Error(w, "listall not implemented", http.StatusServiceUnavailable)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
+	fmt.Printf("users: %+v", users)
+	resp, err := json.Marshal(users)
+	if err != nil {
+		http.Error(w, "Unable to  marshall users", http.StatusServiceUnavailable)
+		return
+	}
+	w.Write(resp)
+
 }
 
 // Delete the user if registered
