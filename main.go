@@ -79,7 +79,7 @@ func main() {
 	admin := handlers.GetAdmin(*secret, &adminService)
 
 	mux.Handle("/admin/user", admin.Add()).Methods(http.MethodPost)
-	mux.Handle("/admin/user/{:id}", admin.Del()).Methods(http.MethodDelete)
+	mux.Handle("/admin/user/{id}", admin.Del()).Methods(http.MethodDelete)
 	mux.Handle("/admin/user", admin.ListAll()).Methods(http.MethodGet)
 
 	httpServer := manners.NewServer()
