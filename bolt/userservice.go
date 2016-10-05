@@ -3,6 +3,7 @@ package bolt
 import (
 	"log"
 
+	"github.com/boltdb/bolt"
 	"github.com/pkg/errors"
 	"github.com/tixu/Auth/bolt/internal"
 	"github.com/tixu/Auth/users"
@@ -66,12 +67,29 @@ func (s *UserService) GetUser(name string) (*users.User, error) {
 
 //ListAll list all the users store in the bolt store
 func (s *UserService) ListAll() (users.Users, error) {
-	/**tx, err := s.session.db.Begin(false)
-	tx.
+	tx, err := s.session.db.Begin(false)
+	defer tx.Commit()
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get a session while listing all the users")
-	}*/
-	return nil, errors.New("unimplemented")
+	}
+	// Find and unmarshal user.
+	var u users.User
+	var us users.Users = make(map[string]users.User)
+
+	tx.DB().View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(userBucket))
+		b.ForEach(func(k, v []byte) error {
+			err := internal.UnmarshalUser(v, &u)
+			if err != nil {
+				return errors.Wrap(err, "error will unmarshalling db")
+			}
+			s := string(k)
+			us[s] = u
+			return nil
+		})
+		return nil
+	})
+	return us, nil
 }
 
 //AddUser adds an user to bolt store
