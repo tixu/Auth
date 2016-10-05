@@ -19,24 +19,24 @@ var DB = users.Users{
 	"admin": users.User{
 		Name: "admin",
 		// bcrypt has for "password"
-		
+
 		PasswordHash: "$2a$08$5XdTvZR/PaCsVbQYNcDuAeZ6P.lL75VC1Z819M6myutcnasfKZSiq",
 		Email:        "user@example.com",
 		Role:         "wtfd",
-	}
+	},
 }
 
 type UserService struct {
 	DB users.Users
 }
 
-func (*UserService) GetUser(name string) (user users.User, err error) {
+func (*UserService) GetUser(name string) (*users.User, error) {
 
 	user, ok := DB[name]
 	if ok == false {
-		return user, errors.New("not found")
+		return &user, errors.New("not found")
 	}
-	return user, nil
+	return &user, nil
 }
 
 func GetUserMockService() *UserService {
