@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/tixu/Auth/users"
 )
 
@@ -53,12 +54,13 @@ func (h *AdminHandler) listAll(w http.ResponseWriter, r *http.Request) {
 // Delete the user if registered
 func (h *AdminHandler) del(w http.ResponseWriter, r *http.Request) {
 
-	/*vars := mux.Vars(r)
+	vars := mux.Vars(r)
 	id := vars["id"]
-	h.userAdmin.DeleteUser(id)*/
-
-	http.Error(w, "del not implemented", http.StatusServiceUnavailable)
-
+	if err := h.userAdmin.DeleteUser(id); err != nil {
+		http.Error(w, "del not implemented", http.StatusServiceUnavailable)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 // Add a user to  the users registered
