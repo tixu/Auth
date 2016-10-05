@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -41,7 +40,7 @@ func (h *AdminHandler) listAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
-	fmt.Printf("users: %+v", users)
+
 	resp, err := json.Marshal(users)
 	if err != nil {
 		http.Error(w, "Unable to  marshall users", http.StatusServiceUnavailable)
